@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.neusoft.neusipo</groupId>
+  <artifactId>chinese-english-translate</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>chinese-english-translate</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
+	<org.struts.spring.version>2.5.10.1</org.struts.spring.version>
+	<org.struts.version>2.5.10.1</org.struts.version>
+  </properties>
+
+  <dependencies>
+  <!-- https://mvnrepository.com/artifact/com.github.83945105/holygrail -->
+ <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>3.10.1</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+     
+      <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.2</version>
+      </dependency>
+      <dependency>
+			    <groupId>org.jsoup</groupId>
+			    <artifactId>jsoup</artifactId>
+			    <version>1.8.3</version>
+     </dependency>
+  <!-- ******************struts2 and spring  start********************* -->
+    <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+            <version>${org.struts.spring.version}</version>
+        </dependency>
+    <dependency>
+	    <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${org.springframework.version}</version>
+    </dependency>
+    <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-aspects</artifactId>
+	    <version>${org.springframework.version}</version>
+    </dependency>
+    <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-aop</artifactId>
+	    <version>${org.springframework.version}</version>
+    </dependency>
+   <dependency>
+	    <groupId>org.apache.struts</groupId>
+	    <artifactId>struts2-json-plugin</artifactId>
+	    <version>2.5.14.1</version>
+   </dependency>
+ 
+
+    <!-- ******************struts2 and spring  end********************* -->
+     <build>
+		<finalName>s-provider-task</finalName>
+		<resources>
+			<resource>
+				<targetPath>${project.build.directory}/classes</targetPath>
+				<directory>src/main/resources/properties</directory>
+				<filtering>true</filtering>
+				<includes>
+					 Provider的属性配置文件 
+					<include>**/*.config</include>
+					<include>**/*.ini</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			 结合com.alibaba.dubbo.container.Main 
+			<resource>
+				<targetPath>${project.build.directory}/classes/META-INF/spring</targetPath>
+				<directory>src/main/resources/spring</directory>
+				<filtering>true</filtering>
+				<includes>
+					 Provider容器的启动上下文配置文件：此配置属性为容器级，个性应用的配置通过引用配置方式引入 
+					<include>spring-context.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<targetPath>${project.build.directory}/classes</targetPath>
+				<directory>src/main/resources/spring</directory>
+				<filtering>true</filtering>
+				<includes>
+					
+						加载本Provider的Bean初始化配置，一般约定有两个：datasource-app.xml,
+						provider_name-app.xml
+					
+					<include>**/*app*.xml</include>
+					<include>**/*provider*.xml</include>
+				</includes>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				 解决Maven插件在Eclipse内执行了一系列的生命周期引起冲突 
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			 打包jar文件时，配置manifest文件，加入lib包的jar依赖 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<classesDirectory>target/classes/</classesDirectory>
+					<archive>
+						<manifest>
+							<mainClass>com.alibaba.dubbo.container.Main</mainClass>
+							<useUniqueVersions>true</useUniqueVersions>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<type>jar</type>
+							<includeTypes>jar</includeTypes>
+							<useUniqueVersions>false</useUniqueVersions>
+							<outputDirectory>
+								${project.build.directory}/lib  
+                            </outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build> 
+    
+	<!--项目开发者列表 -->
+	<developers>
+	   <developer>
+	        <!--SCM里项目开发者的唯一标识符-->    
+			<id>fandanping</id>
+			<!--项目开发者的全名-->   
+			<name>DanPing Fan</name>
+			 <!--项目开发者的email-->    
+			<email>fandp@neusoft.com</email>
+			<!--项目开发者在项目中扮演的角色，角色元素描述了各种角色-->  
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<!--项目的其他贡献者列表-->     
+	    <contributors>    
+	       <!--项目的其他贡献者。参见developers/developer元素-->    
+	            
+        </contributors>  
+    
+    
+    
+  </dependencies>
+</project>

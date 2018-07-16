@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+<!-- 设置struts编码格式 -->
+<constant name="struts.i18n.encoding" value="utf-8"></constant>
+<!-- 设置请求后缀名 -->
+<constant name="struts.action.extension" value="do,go,action"/>
+<!-- 设 置浏览器是否缓存静态内容，默认值为true（生产环境下使用），开发阶段最好 关闭 -->   
+<constant name="struts.serve.static.browserCache " value="false" />   
+<!-- 当 struts的配置文件修改后，系统是否自动重新加载该文件，默认值为false（生 产环境下使用），开发阶段最好打开 -->   
+<constant name="struts.configuration.xml.reload" value="true" />   
+<!-- 开 发模式下使用，这样可以打印出更详细的错误信息 -->   
+<constant name="struts.devMode" value="false" />
+<!-- 该 属性指定Struts 2中的action由Spring容器创 建 -->   
+<!--  <constant name="struts.objectFactory" value="spring" /> -->  
+<!-- 该属性设置Struts 2是否支持动态方法调用，该属性的默认值是true。如果需要关闭动态方法调用，则可设置该属性为false。 -->
+<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+<!-- spring 托管 -->  
+<constant name="struts.objectFactory" value="spring" />  
+
+ <package name="base" extends="json-default" >
+       <interceptors>  
+            <!-- 声明自定义的拦截器 -->  
+           
+              
+            <!-- 声明自定义拦截器栈 -->  
+            <interceptor-stack name="expessionStack">  
+                <interceptor-ref name="defaultStack"/>  
+                  
+                <!-- 配置使用自定义拦截器 -->  
+                <!--<interceptor-ref name=""/>  
+                  
+            --></interceptor-stack>  
+        </interceptors>  
+  
+  <!-- 配置修改struts2框架运行时，默认执行的是自定义拦截器栈 -->  
+        <default-interceptor-ref name="expessionStack" />  
+  <!-- 全局的result -->
+		<global-results>
+			<result name="jsonResult" type="json"></result>
+			<result name="error">/translate/error/error.jsp</result>
+		</global-results>
+  <!-- 配置动态方法调用 -->
+        <global-allowed-methods>regex:.*</global-allowed-methods>
+        
+ </package>
+  
+<!-- 引入总struts配置文件 -->
+<include file="com/neusoft/neusipo/translate/struts.xml"></include>
+
+</struts>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+
+
+
+    
+     <package name="translate" namespace="/translate" extends="base" strict-method-invocation="false">
+          <action name="translateAC" class="translate.translateAC" method="execute">
+            <result name="JSON" type="json"></result>
+          </action>
+         
+    </package>
+   
+      
+
+
+
+
+
+</struts>
